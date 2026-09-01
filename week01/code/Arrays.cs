@@ -9,11 +9,17 @@ public static class Arrays
     public static double[] MultiplesOf(double number, int length)
     {
         // TODO Problem 1 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+        // Loop through the lenght andfor each iteration multiply by number and add to array then return the array
 
-        return []; // replace this return statement with your own
+        List<double> multiples = new();
+
+        for (int i = 1; i < length; i++)
+        {
+            double multiple = number * i;
+            multiples.Add(multiple);
+        }
+
+        return multiples.ToArray();
     }
 
     /// <summary>
@@ -23,11 +29,30 @@ public static class Arrays
     ///
     /// Because a list is dynamic, this function will modify the existing data list rather than returning a new list.
     /// </summary>
-    public static void RotateListRight(List<int> data, int amount)
+    public static int[] RotateListRight(List<int> data, int amount)
     {
         // TODO Problem 2 Start
-        // Remember: Using comments in your program, write down your process for solving this problem
-        // step by step before you write the code. The plan should be clear enough that it could
-        // be implemented by another person.
+        // Approach: split the list into two parts - the "tail" (last `amount` elements)
+        // and the "head" (first `value` elements). Rebuild the list by putting the
+        // tail first, followed by the head, which produces a right rotation.
+
+
+        List<int> Rotated = new();
+
+        int value = data.Count - amount;
+
+        List<int> sub = data.GetRange(0, value - 1);
+
+        for (int i = value; i < data.Count; i++)
+        {
+            Rotated.Add(data[i]);
+        }
+
+        foreach (int s in sub)
+        {
+            Rotated.Add(s);
+        }
+
+        return Rotated.ToArray();
     }
 }
