@@ -20,9 +20,20 @@ public static class SetsAndMaps
     /// </summary>
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
-    {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+    {      
+        var wordSet = new HashSet<string>(words);
+        var result = new List<string>();
+        foreach (var w in wordSet)
+        {
+            if (w[0] == w[1])
+                continue;
+
+            string flipped = new string(new[] { w[1], w[0] });
+
+            if (wordSet.Contains(flipped) && string.Compare(w, flipped) < 0)
+                result.Add($"{w} & {flipped}");
+        }
+        return result.ToArray();
     }
 
     /// <summary>
@@ -42,7 +53,16 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+
+            var degree = fields[3].Trim();
+
+            if (degree.Length == 0)
+                continue;
+
+            if (!degrees.ContainsKey(degree))
+                degrees[degree] = 1;
+            else
+                degrees[degree] += 1;
         }
 
         return degrees;
@@ -66,8 +86,15 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        if (word1.Length != word2.Length)
+            return false;
+
+        var a = word1.ToLower().ToCharArray();
+        var b = word2.ToLower().ToCharArray();
+        Array.Sort(a);
+        Array.Sort(b);
+        return new string(a) == new string(b);
+
     }
 
     /// <summary>
@@ -101,6 +128,14 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+
+        var result = new List<string>();
+        foreach (var feature in featureCollection.Features)
+        {
+            var place = feature.Properties.Place;
+            var mag = feature.Properties.Mag;
+            result.Add($"{place} - Mag {mag}");
+        }
+        return result.ToArray();
     }
 }
