@@ -62,7 +62,7 @@ public class Maze
         var doors = _mazeMap[(_currX, _currY)];
         if (!doors[2])
             throw new InvalidOperationException("Can't go that way!");
-        _currY++;
+        _currY--;
     }
 
     /// <summary>
@@ -75,7 +75,7 @@ public class Maze
         var doors = _mazeMap[(_currX, _currY)];
         if (!doors[3])
             throw new InvalidOperationException("Can't go that way!");
-        _currY--;
+        _currY++;
     }
 
     public string GetStatus()

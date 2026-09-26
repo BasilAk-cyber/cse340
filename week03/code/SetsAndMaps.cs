@@ -86,15 +86,19 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        if (word1.Length != word2.Length)
+        var a = word1.Where(c => !char.IsWhiteSpace(c))
+                    .Select(char.ToLowerInvariant)
+                    .ToArray();
+        var b = word2.Where(c => !char.IsWhiteSpace(c))
+                    .Select(char.ToLowerInvariant)
+                    .ToArray();
+
+        if (a.Length != b.Length)
             return false;
 
-        var a = word1.ToLower().ToCharArray();
-        var b = word2.ToLower().ToCharArray();
         Array.Sort(a);
         Array.Sort(b);
         return new string(a) == new string(b);
-
     }
 
     /// <summary>
