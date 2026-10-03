@@ -149,8 +149,8 @@ public class LinkedList : IEnumerable<int>
                 }
                 else
                 {
-                    curr.Next!.Prev = curr.Next!.Prev;
-                    curr.Next!.Prev = curr.Next!.Prev;
+                    curr.Prev!.Next = curr.Next;
+                    curr.Next!.Prev = curr.Prev;
                     curr.Prev = null;
                     curr.Next = null;
                 }
@@ -167,24 +167,34 @@ public class LinkedList : IEnumerable<int>
     /// </summary>
     public void Replace(int oldValue, int newValue)
     {
-        // TODO Problem 4
-
-        Node newNode = new(newValue);
         Node? curr = _head;
-        while (curr.Data == oldValue)
+        while (curr is not null)
         {
-            if ( curr.Data != oldValue)
+            Node? next = curr.Next; // save next before we touch curr's links
+
+            if (curr.Data == oldValue)
             {
-                curr = curr.Next;
+                var newNode = new Node(newValue)
+                {
+                    Prev = curr.Prev,
+                    Next = curr.Next
+                };
+
+                if (curr.Prev is not null)
+                    curr.Prev.Next = newNode;
+                else
+                    _head = newNode;   // curr was the head
+
+                if (curr.Next is not null)
+                    curr.Next.Prev = newNode;
+                else
+                    _tail = newNode;   // curr was the tail
+
+                curr.Prev = null;
+                curr.Next = null;
             }
 
-            newNode.Prev = curr.Prev;
-            curr.Prev = null;
-            newNode.Next = curr.Next;
-            curr.Next = null;
-
-            return; 
-
+            curr = next; // advance using the saved reference, not curr.Next (which may now be null)
         }
     }
 
@@ -216,7 +226,13 @@ public class LinkedList : IEnumerable<int>
     public IEnumerable Reverse()
     {
         // TODO Problem 5
-        yield return 0; // replace this line with the correct yield return statement(s)
+
+        var curr = _tail;
+        while (curr is not null)
+        {
+            yield return curr.Data; 
+            curr = curr.Prev;
+        }
     }
 
     public override string ToString()
