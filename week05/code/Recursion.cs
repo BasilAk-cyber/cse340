@@ -14,8 +14,11 @@ public static class Recursion
     /// </summary>
     public static int SumSquaresRecursive(int n)
     {
-        // TODO Start Problem 1
+       if (n <= 0)
+       {
         return 0;
+       }
+       return SumSquaresRecursive(n-1) + n*n;
     }
 
     /// <summary>
@@ -39,7 +42,23 @@ public static class Recursion
     /// </summary>
     public static void PermutationsChoose(List<string> results, string letters, int size, string word = "")
     {
-        // TODO Start Problem 2
+        // Base case: the word has reached the requested length,
+        // so it is a finished permutation.
+        if (word.Length == size)
+        {
+            results.Add(word);
+            return;
+        }
+
+        // Try each remaining letter as the next letter of the word.
+        for (var i = 0; i < letters.Length; i++)
+        {
+            // Remove the chosen letter so it can't be used again.
+            var lettersLeft = letters.Remove(i, 1);
+
+            // Add the chosen letter to the word and recurse.
+            PermutationsChoose(results, lettersLeft, size, word + letters[i]);
+        }
     }
 
     /// <summary>
@@ -96,10 +115,21 @@ public static class Recursion
         if (s == 3)
             return 4;
 
-        // TODO Start Problem 3
+        // Create the dictionary on the first call only.
+        if (remember == null)
+            remember = new Dictionary<int, decimal>();
 
-        // Solve using recursion
-        decimal ways = CountWaysToClimb(s - 1) + CountWaysToClimb(s - 2) + CountWaysToClimb(s - 3);
+        // If we already solved this one, just look it up.
+        if (remember.ContainsKey(s))
+            return remember[s];
+
+        // Solve using recursion (passing 'remember' along so all calls share it)
+        decimal ways = CountWaysToClimb(s - 1, remember) + 
+                       CountWaysToClimb(s - 2, remember) + 
+                       CountWaysToClimb(s - 3, remember);
+
+        // Remember the result for later use.
+        remember[s] = ways;
         return ways;
     }
 
@@ -118,7 +148,20 @@ public static class Recursion
     /// </summary>
     public static void WildcardBinary(string pattern, List<string> results)
     {
-        // TODO Start Problem 4
+        // Find the first wildcard. IndexOf returns -1 if there isn't one.
+        var index = pattern.IndexOf('*');
+
+        // Base case: no wildcards left, so this is a finished binary string.
+        if (index == -1)
+        {
+            results.Add(pattern);
+            return;
+        }
+
+        // Replace the first '*' with '0' and with '1'. Each new pattern has
+        // one fewer wildcard, so it is a smaller problem.
+        WildcardBinary(pattern[..index] + "0" + pattern[(index + 1)..], results);
+        WildcardBinary(pattern[..index] + "1" + pattern[(index + 1)..], results);
     }
 
     /// <summary>
@@ -132,12 +175,33 @@ public static class Recursion
         if (currPath == null) {
             currPath = new List<ValueTuple<int, int>>();
         }
-        
-        // currPath.Add((1,2)); // Use this syntax to add to the current path
 
-        // TODO Start Problem 5
-        // ADD CODE HERE
+        // Step onto the current square.
+        currPath.Add((x, y));
 
-        // results.Add(currPath.AsString()); // Use this to add your path to the results array keeping track of complete maze solutions when you find the solution.
+        if (maze.IsEnd(x, y))
+        {
+            // Base case: we reached the end, so save this path.
+            results.Add(currPath.AsString());
+        }
+        else
+        {
+            // Try all four directions. Only move if the square is valid
+            // (inside the maze, not a wall, and not already on our path).
+            if (maze.IsValidMove(currPath, x + 1, y))
+                SolveMaze(results, maze, x + 1, y, currPath);
+
+            if (maze.IsValidMove(currPath, x - 1, y))
+                SolveMaze(results, maze, x - 1, y, currPath);
+
+            if (maze.IsValidMove(currPath, x, y + 1))
+                SolveMaze(results, maze, x, y + 1, currPath);
+
+            if (maze.IsValidMove(currPath, x, y - 1))
+                SolveMaze(results, maze, x, y - 1, currPath);
+        }
+
+        // Backtrack: step off this square so other paths can use it.
+        currPath.RemoveAt(currPath.Count - 1);
     }
 }
